@@ -105,7 +105,7 @@ export const GlassmorphicTrainingCard: React.FC<GlassmorphicTrainingCardProps> =
             <GlassmorphicButton
               variant={buttonVariants[variant]}
               fullWidth
-              to={variant === 'primary' ? '/training/beginner' : variant === 'secondary' ? '/training/intermediate' : '/training/advanced'}
+              to={link}
             >
               View Program
             </GlassmorphicButton>

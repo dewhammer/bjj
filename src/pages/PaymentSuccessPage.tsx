@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import GlassmorphicCard from '../components/ui/GlassmorphicCard';
 import GlassmorphicButton from '../components/ui/GlassmorphicButton';
 
@@ -12,9 +12,13 @@ const PaymentSuccessPage: React.FC = () => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
+    // These variables are used to determine payment status
     const paymentIntentId = searchParams.get('payment_intent');
     const paymentIntentClientSecret = searchParams.get('payment_intent_client_secret');
     const redirectStatus = searchParams.get('redirect_status');
+    
+    console.log('Payment Intent ID:', paymentIntentId);
+    console.log('Payment Intent Client Secret:', paymentIntentClientSecret);
     
     if (redirectStatus === 'succeeded') {
       setPaymentStatus('success');

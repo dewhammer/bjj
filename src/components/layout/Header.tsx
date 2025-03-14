@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
-import GlassmorphicCard from '../ui/GlassmorphicCard';
 import GlassmorphicButton from '../ui/GlassmorphicButton';
 
 const navItems = [
@@ -108,8 +107,8 @@ const Header: React.FC = () => {
               variant="secondary"
               size="sm"
               to={isHomePage ? "#training" : "/#training"}
-              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                if (isHomePage) {
+              onClick={(e) => {
+                if (isHomePage && e) {
                   e.preventDefault();
                   const targetElement = document.querySelector('#training');
                   if (targetElement) {
@@ -165,8 +164,8 @@ const Header: React.FC = () => {
                 size="sm"
                 to={isHomePage ? "#training" : "/#training"}
                 className="mt-2"
-                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  if (isHomePage) {
+                onClick={(e) => {
+                  if (isHomePage && e) {
                     e.preventDefault();
                     const targetElement = document.querySelector('#training');
                     if (targetElement) {
