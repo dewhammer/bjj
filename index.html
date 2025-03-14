@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0284c7" />
+    <meta name="description" content="Achieve peak performance in Brazilian Jiu-Jitsu and mountain endurance with HimalayanBJJ" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Himalayan BJJ - Brazilian Jiu-Jitsu & Mountain Endurance</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      // Service worker registration script
+      // This will only run in production when built
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Check if we're in production by looking for the sw.js file
+          fetch('/sw.js', { method: 'HEAD' })
+            .then(response => {
+              if (response.ok) {
+                return navigator.serviceWorker.register('/sw.js');
+              }
+              throw new Error('Service worker not available in development');
+            })
+            .then(registration => {
+              console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch(error => {
+              console.log('Service Worker registration skipped:', error);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>
