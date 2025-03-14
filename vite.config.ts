@@ -9,4 +9,5 @@ export default defineConfig({
       overlay: false, // Disable the HMR error overlay
     },
   },
+  base: "./", // Use relative paths for all assets
 }); 

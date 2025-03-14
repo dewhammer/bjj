@@ -1,8 +1,8 @@
 // Replace this with your actual Stripe publishable key
 export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51R2hBtQxT4F8TUvf929YwAerHbdeXQn7wtlSs9d6p9d85TQ7axxvE1HVqkGw9UWs7UrdaLeIPVYOJCdoJ23WXXod00U1CAnRtO';
 
-// API endpoint for creating payment intents
-export const PAYMENT_API_URL = 'http://localhost:4242/create-payment-intent';
+// API endpoint for creating payment intents - use relative URL in production
+export const PAYMENT_API_URL = '/create-payment-intent';
 
 // Stripe appearance settings
 export const STRIPE_APPEARANCE = {
