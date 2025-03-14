@@ -1,6 +1,6 @@
 import React from 'react';
 import GlassmorphicHero from '../components/home/GlassmorphicHero';
-import GlassmorphicTrainingSection from '../components/training/GlassmorphicTrainingSection';
+import HomeTrainingSection from '../components/home/HomeTrainingSection';
 import GlassmorphicInstructorsSection from '../components/instructors/GlassmorphicInstructorsSection';
 import GlassmorphicTestimonialsSection from '../components/testimonials/GlassmorphicTestimonialsSection';
 import GlassmorphicCTA from '../components/cta/GlassmorphicCTA';
@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
       
       {/* Training Programs Section */}
       <div id="training">
-        <GlassmorphicTrainingSection />
+        <HomeTrainingSection />
       </div>
       
       {/* Instructors Section */}
