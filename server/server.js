@@ -8,9 +8,27 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Configure CORS more explicitly
+// Configure CORS for both development and production
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:5174', 
+  'http://localhost:5175',
+  'https://bjj-himalayan-bjj.vercel.app',
+  'https://himalayan-bjj.vercel.app',
+  'https://himalayan-bjj.com'
+];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -54,8 +72,14 @@ app.post('/create-payment-intent', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 4242;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Test the server: http://localhost:${PORT}/ping`);
-}); 
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 4242;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Test the server: http://localhost:${PORT}/ping`);
+  });
+}
+
+// Export the Express API for Vercel
+module.exports = app; 
