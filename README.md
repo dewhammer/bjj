@@ -168,3 +168,46 @@ himalayan-bjj/
 ## License
 
 All rights reserved.
+
+## Environment Setup
+
+### Vercel Environment Variables
+
+Make sure to set up the following environment variables in your Vercel project settings:
+
+- `STRIPE_SECRET_KEY`: Your Stripe secret key from the Stripe dashboard
+
+To add environment variables to your Vercel project:
+1. Go to your Vercel dashboard
+2. Select your project
+3. Click on "Settings" tab
+4. Navigate to "Environment Variables" 
+5. Add the variable `STRIPE_SECRET_KEY` with your Stripe secret key value
+6. Deploy your project again to apply the changes
+
+## Local Development
+
+```
+npm run dev
+```
+
+## Production Build
+
+```
+npm run build
+```
+
+## Deployment
+
+This project is configured for deployment on Vercel.
+
+```
+vercel
+```
+
+## Features
+
+- Responsive design with glassmorphic UI elements
+- Training program information
+- E-book signup
+- Payment processing with Stripe

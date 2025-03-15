@@ -80,6 +80,25 @@ const GlassmorphicButton: React.FC<GlassmorphicButtonProps> = ({
     </>
   );
 
+  // Handle smooth scrolling for hash links
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (onClick) {
+      onClick(e);
+      return;
+    }
+    
+    // Check if it's a hash link and if we're on the same page
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const targetId = href.substring(1);
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
   // Render as link if 'to' or 'href' prop is provided
   if (to) {
     return (
@@ -96,6 +115,7 @@ const GlassmorphicButton: React.FC<GlassmorphicButtonProps> = ({
         className={commonClasses}
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener noreferrer' : undefined}
+        onClick={handleSmoothScroll}
       >
         {content}
       </a>

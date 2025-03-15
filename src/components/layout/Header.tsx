@@ -34,17 +34,30 @@ const Header: React.FC = () => {
 
     const observerOptions = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.2,
+      rootMargin: '-100px 0px -70% 0px', // Adjust as needed for better sensitivity
+      threshold: [0.1, 0.2, 0.3, 0.4, 0.5] // Multiple thresholds for better precision
     };
 
     const handleIntersect = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id;
-          setActiveSection(sectionId ? `#${sectionId}` : '');
+      // Filter entries that are intersecting
+      const visibleEntries = entries.filter(entry => entry.isIntersecting);
+      
+      if (visibleEntries.length > 0) {
+        // Find the one with the highest intersection ratio
+        const topEntry = visibleEntries.reduce((prev, current) => 
+          prev.intersectionRatio > current.intersectionRatio ? prev : current
+        );
+        
+        const sectionId = topEntry.target.id;
+        
+        if (sectionId === 'top' || !sectionId) {
+          setActiveSection('');
+        } else {
+          setActiveSection(`#${sectionId}`);
         }
-      });
+        
+        console.log('Active section set to:', sectionId ? `#${sectionId}` : 'home');
+      }
     };
 
     const observer = new IntersectionObserver(handleIntersect, observerOptions);
@@ -103,7 +116,7 @@ const Header: React.FC = () => {
     }
     
     if (path.startsWith('#')) {
-      return isHomePage && (activeSection === path || (activeSection === '' && path === '#top'));
+      return isHomePage && activeSection === path;
     }
     
     return location.pathname === path;

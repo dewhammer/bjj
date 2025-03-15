@@ -1,8 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import GlassmorphicButton from '../ui/GlassmorphicButton';
 
 const Footer: React.FC = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  
+  // Handle smooth scrolling to top of page
+  const handleScrollToTop = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isHomePage) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+  
   return (
     <footer className="relative py-12 border-t border-primary/30 mt-12">
       {/* Background blur elements */}
@@ -14,7 +25,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Logo and about */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2" onClick={handleScrollToTop}>
               <div className="bg-secondary/90 text-white font-bold text-xl rounded-full h-10 w-10 flex items-center justify-center">
                 BJJ
               </div>
@@ -31,7 +42,15 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-bold mb-4 text-foreground">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-foreground/80 hover:text-foreground transition-colors">Home</Link></li>
+              <li>
+                <a 
+                  href={isHomePage ? "#top" : "/"} 
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                  onClick={handleScrollToTop}
+                >
+                  Home
+                </a>
+              </li>
               <li><Link to="/training" className="text-foreground/80 hover:text-foreground transition-colors">Training Programs</Link></li>
               <li><Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors">About Us</Link></li>
               <li><Link to="/testimonials" className="text-foreground/80 hover:text-foreground transition-colors">Testimonials</Link></li>
