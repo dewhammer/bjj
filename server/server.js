@@ -2,11 +2,42 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const Stripe = require('stripe');
+const path = require('path');
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// Initialize Stripe with environment variable
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripeKeyAvailable = !!stripeKey;
+let stripe;
+let stripeInitialized = false;
+
+if (stripeKeyAvailable) {
+  try {
+    stripe = new Stripe(stripeKey);
+    stripeInitialized = true;
+    console.log('✅ Stripe initialized successfully');
+  } catch (error) {
+    console.error('❌ Failed to initialize Stripe:', error);
+  }
+} else {
+  console.warn('⚠️ STRIPE_SECRET_KEY not found in environment variables');
+}
+
+// Debug endpoint to check server status
+app.get('/ping', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    stripeKeyAvailable,
+    stripeInitialized
+  });
+});
 
 // Configure CORS for both development and production
 const allowedOrigins = [
@@ -16,12 +47,14 @@ const allowedOrigins = [
   'http://localhost:5176',
   'https://bjj-himalayan-bjj.vercel.app',
   'https://himalayan-bjj.vercel.app',
-  'https://himalayan-bjj.com'
+  'https://himalayan-bjj.com',
+  // Add your production domain here (without trailing slash)
+  'https://himalayan-bjj-git-main-dewhammer.vercel.app'
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow server-to-server requests and development tools to work (like Postman)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) === -1) {
@@ -32,6 +65,7 @@ app.use(cors({
     return callback(null, true);
   },
   methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true, // Allow cookies/authentication
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -45,74 +79,103 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set up Stripe with the secret key
-let stripe;
-try {
-  const stripeApiKey = process.env.STRIPE_SECRET_KEY;
-  if (!stripeApiKey) {
-    console.error('ERROR: STRIPE_SECRET_KEY is not defined in environment variables');
-  } else {
-    console.log('Stripe key available (starts with):', stripeApiKey.substring(0, 8) + '...');
-    stripe = Stripe(stripeApiKey);
+// Simple checkout endpoint (direct redirect approach like the example)
+app.post('/create-checkout-session', async (req, res) => {
+  if (!stripeInitialized || !stripe) {
+    return res.status(500).json({ error: 'Stripe payment processing is not available' });
   }
-} catch (error) {
-  console.error('Failed to initialize Stripe:', error);
-}
-
-// Test route to verify server is working
-app.get('/ping', (req, res) => {
-  const envStatus = {
-    nodeEnv: process.env.NODE_ENV || 'not set',
-    stripeKeyAvailable: !!process.env.STRIPE_SECRET_KEY,
-    stripeInitialized: !!stripe
-  };
   
-  console.log('Ping request received. Environment status:', envStatus);
-  res.json({ 
-    message: 'Server is running!',
-    timestamp: new Date().toISOString(),
-    environment: envStatus
-  });
+  try {
+    const { price_id, quantity = 1 } = req.body;
+    
+    // If no price_id is provided, create a product and price dynamically
+    let lineItems;
+    
+    if (price_id) {
+      lineItems = [{ price: price_id, quantity }];
+    } else {
+      const { name, amount, description } = req.body;
+      
+      if (!name || !amount) {
+        return res.status(400).json({ error: 'Missing required parameters (name, amount)' });
+      }
+      
+      lineItems = [{
+        price_data: {
+          currency: 'inr',
+          product_data: {
+            name: name,
+            description: description || 'Himalayan BJJ Program',
+          },
+          unit_amount: amount, // in paise
+        },
+        quantity: quantity,
+      }];
+    }
+    
+    // Create the session
+    const session = await stripe.checkout.sessions.create({
+      line_items: lineItems,
+      mode: 'payment',
+      success_url: `${req.headers.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.origin}/payment-cancelled`,
+    });
+    
+    // Use redirect like in the example
+    res.redirect(303, session.url);
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post('/create-payment-intent', async (req, res) => {
+// JSON API version for modern frontend integration
+app.post('/api/create-checkout-session', async (req, res) => {
+  // Check if Stripe is properly initialized
+  if (!stripeInitialized || !stripe) {
+    return res.status(500).json({ 
+      error: {
+        message: 'Stripe payment processing is not available at this time',
+        code: 'stripe_unavailable'
+      }
+    });
+  }
+  
   try {
-    console.log('Received payment intent request:', req.body);
-    const { amount, programId } = req.body;
-
-    if (!amount) {
-      console.log('Missing amount parameter');
-      return res.status(400).json({ error: 'Missing amount parameter' });
-    }
+    const { programId, amount, name, description } = req.body;
+    console.log('Checkout request received:', { programId, amount, name });
     
-    if (!stripe) {
-      console.error('Stripe is not initialized');
-      return res.status(500).json({ 
-        error: 'Stripe is not initialized. Check server configuration.',
-        code: 'stripe_not_initialized'
-      });
+    if (!amount || !programId) {
+      return res.status(400).json({ error: 'Missing required parameters' });
     }
 
-    console.log(`Creating payment intent for amount: ${amount}, programId: ${programId}`);
-    
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: 'inr',
-      automatic_payment_methods: { enabled: true },
+    // Create a checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'inr',
+            product_data: {
+              name: name || 'Himalayan BJJ Program',
+              description: description || 'Training program registration'
+            },
+            unit_amount: amount, // in smallest currency unit (paise)
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${req.headers.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.origin}/payment-cancelled`,
       metadata: { programId }
     });
 
-    console.log('Payment intent created successfully:', paymentIntent.id);
-    res.json({ clientSecret: paymentIntent.client_secret });
+    // Return JSON response for the frontend to handle
+    res.json({ url: session.url });
+    console.log('Checkout session created:', session.id);
   } catch (error) {
-    console.error('Error creating payment intent:', error);
-    console.error('Error details:', {
-      message: error.message,
-      type: error.type,
-      code: error.code,
-      stack: error.stack
-    });
-    
+    console.error('Error creating checkout session:', error);
     res.status(500).json({ 
       error: {
         message: error.message,
@@ -123,25 +186,17 @@ app.post('/create-payment-intent', async (req, res) => {
   }
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).json({ 
-    error: {
-      message: err.message || 'Internal server error',
-      code: err.code || '500'
-    }
-  });
+// Catch-all route to serve the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
 });
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 4242;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Test the server: http://localhost:${PORT}/ping`);
-  });
-}
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Debug endpoint available at /ping`);
+});
 
 // Export the Express API for Vercel
 module.exports = app; 

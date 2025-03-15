@@ -1,213 +1,121 @@
-# HimalayanBJJ Website
+# Himalayan BJJ
 
-A Progressive Web App (PWA) for Himalayan BJJ, a unique martial arts training program that combines Brazilian Jiu-Jitsu with Himalayan endurance training.
-
-## Modern Glassmorphism Design
-
-This project implements a modern glassmorphism design approach, which creates a frosted glass effect with depth and translucency. The design includes:
-
-- Frosted glass effects with customizable blur levels
-- Subtle transparency and light border effects
-- Colorful gradient backgrounds with blur overlays
-- Smooth animations and transitions
-- Optimized for dark mode aesthetics
-
-## Mobile UX Best Practices (2025)
-
-The interface follows the latest mobile UX design principles:
-
-### Touch-First Interaction
-- All interactive elements have a minimum size of 44x44 pixels
-- Important actions are positioned within thumb-friendly zones
-- Reduced need for precise tapping with generous touch targets
-
-### Performance Optimization
-- Optimized image loading with lazy loading and placeholders
-- Minimal use of heavy animations to preserve battery life
-- Efficient component rendering for smooth scrolling
-
-### Simplified Navigation
-- Clear visual hierarchy with consistent UI patterns
-- Bottom-positioned primary actions for easy thumb access
-- Progressive disclosure of information to reduce cognitive load
-
-### Visual Clarity
-- High contrast text with proper spacing
-- Content broken into digestible chunks
-- Sufficient white space to improve readability
-
-### Accessibility
-- Proper color contrast ratios
-- Support for screen readers
-- Keyboard navigation support
-- Resizable text
-
-## Components
-
-### UI Components
-
-- **GlassmorphicCard**: A versatile card component with frosted glass effect, various color variants, and elevation levels.
-- **GlassmorphicButton**: Interactive buttons with glassmorphic styling and proper touch targets.
-- **GlassmorphicImage**: Image component with smooth loading states and various rounded corner options.
-
-### Section Components
-
-- **GlassmorphicHero**: Hero section with gradient background and floating image elements.
-- **GlassmorphicTrainingSection**: Training programs section with card-based layout.
-- **GlassmorphicTestimonialsSection**: Testimonials section with student feedback cards.
-- **GlassmorphicCTA**: Call-to-action section with prominent button and decorative elements.
-
-### Layout Components
-
-- **Footer**: Footer with glassmorphic cards and improved mobile navigation.
-
-## Image Requirements
-
-The project requires various content images. See the following README file for details:
-
-- [Image Placeholders](/public/images/README.md)
-
-## Technologies Used
-
-- React
-- TypeScript
-- Tailwind CSS (with custom utilities for glassmorphism effects)
-- React Router
-
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start the development server: `npm run dev`
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Customization
-
-The glassmorphic components are highly customizable through props:
-
-- Change color variants with the `variant` prop
-- Adjust blur intensity with the `blur` prop
-- Control elevation with the `elevation` prop
-- Enable interactive states with the `interactive` prop
-
-## Contributing
-
-1. Add content images to their respective directories in `/public/images/`
-2. Follow the glassmorphism design principles when creating new components
-3. Ensure all components meet the mobile UX best practices outlined above
+A modern website for a Brazilian Jiu-Jitsu training center in the Himalayas, featuring program information, e-commerce, and student resources.
 
 ## Features
 
-- Mobile-first responsive design
-- Progressive Web App capabilities (offline access, installable)
-- Training curriculum and workshop registration
-- E-book sales and member-only content
+- Responsive design with glassmorphic UI
+- Program listing and registration
+- Stripe payment integration
+- Student resources and information
 
 ## Tech Stack
 
 - React with TypeScript
-- Tailwind CSS for styling
+- Vite for build and development
+- TailwindCSS for styling
 - React Router for navigation
-- Workbox for PWA/Service Worker functionality
+- Node.js with Express for the backend
+- Stripe for payment processing
 
-## Development
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v18+)
-- npm (v9+)
+- Node.js 16+ installed
+- npm or yarn
+- Stripe account for payment processing
 
 ### Installation
 
+1. Clone the repository:
 ```bash
-# Install dependencies
+git clone https://github.com/yourusername/himalayan-bjj.git
+cd himalayan-bjj
+```
+
+2. Install dependencies:
+```bash
 npm install
 ```
 
-### Development Server
+3. Create a `.env` file based on `.env.example`:
+```bash
+cp .env.example .env
+```
+
+4. Update the `.env` file with your Stripe API keys:
+```
+STRIPE_SECRET_KEY=sk_test_your_key_here
+STRIPE_PUBLISHABLE_KEY=pk_test_your_key_here
+```
+
+### Development
+
+Start the development server:
 
 ```bash
-# Start development server
 npm run dev
 ```
 
-### Building for Production
+Start the backend server:
 
 ```bash
-# Build for production with PWA features
-npm run build:pwa
+npm run server
 ```
 
-## Project Structure
+### Setting Up Stripe
 
-```
-himalayan-bjj/
-├── public/               # Static assets
-│   ├── icons/            # App icons for PWA
-│   └── manifest.json     # Web App Manifest
-├── src/
-│   ├── assets/           # Project assets
-│   │   ├── images/       # Images
-│   │   └── icons/        # Icons
-│   ├── components/       # React components
-│   │   ├── layout/       # Layout components
-│   │   ├── ui/           # UI components
-│   │   ├── home/         # Homepage components
-│   │   ├── ebook/        # E-book components
-│   │   ├── training/     # Training curriculum components
-│   │   ├── workshops/    # Workshop components
-│   │   └── members/      # Members area components
-│   ├── contexts/         # React contexts
-│   ├── hooks/            # Custom React hooks
-│   ├── pages/            # Page components
-│   └── utils/            # Utility functions
-├── tailwind.config.js    # Tailwind CSS configuration
-└── workbox-config.js     # Service worker configuration
-```
+1. Create a Stripe account at [stripe.com](https://stripe.com)
+2. Get your API keys from the [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
+3. Update the `.env` file with your keys
+4. Test the integration using the checkout demo at `/checkout-demo`
 
-## License
+#### Testing Cards
 
-All rights reserved.
+Use these test card numbers to test your integration:
 
-## Environment Setup
+- Success: `4242 4242 4242 4242`
+- Requires Authentication: `4000 0025 0000 3155`
+- Declined: `4000 0000 0000 0002`
 
-### Vercel Environment Variables
+For all test cards, use any future date for expiry, any 3-digit CVC, and any postal code.
 
-Make sure to set up the following environment variables in your Vercel project settings:
+### Deployment
 
-- `STRIPE_SECRET_KEY`: Your Stripe secret key from the Stripe dashboard
+#### Vercel Deployment
 
-To add environment variables to your Vercel project:
-1. Go to your Vercel dashboard
-2. Select your project
-3. Click on "Settings" tab
-4. Navigate to "Environment Variables" 
-5. Add the variable `STRIPE_SECRET_KEY` with your Stripe secret key value
-6. Deploy your project again to apply the changes
-
-## Local Development
-
-```
-npm run dev
+1. Install the Vercel CLI:
+```bash
+npm install -g vercel
 ```
 
-## Production Build
-
-```
-npm run build
-```
-
-## Deployment
-
-This project is configured for deployment on Vercel.
-
-```
+2. Deploy to Vercel:
+```bash
 vercel
 ```
 
-## Features
+3. Set environment variables in the Vercel dashboard.
 
-- Responsive design with glassmorphic UI elements
-- Training program information
-- E-book signup
-- Payment processing with Stripe
+### Project Structure
+
+- `/src` - Frontend React application
+  - `/components` - React components
+  - `/pages` - Page components
+  - `/hooks` - Custom React hooks
+  - `/utils` - Utility functions
+- `/server` - Backend Express server
+  - `server.js` - Main server file
+- `/public` - Static assets
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

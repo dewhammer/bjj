@@ -51,10 +51,10 @@ const Footer: React.FC = () => {
                   Home
                 </a>
               </li>
-              <li><Link to="/training" className="text-foreground/80 hover:text-foreground transition-colors">Training Programs</Link></li>
+              <li><Link to="/programs" className="text-foreground/80 hover:text-foreground transition-colors">Training Programs</Link></li>
               <li><Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors">About Us</Link></li>
-              <li><Link to="/testimonials" className="text-foreground/80 hover:text-foreground transition-colors">Testimonials</Link></li>
               <li><Link to="/contact" className="text-foreground/80 hover:text-foreground transition-colors">Contact</Link></li>
+              <li><Link to="/signup" className="text-foreground/80 hover:text-foreground transition-colors">Sign Up</Link></li>
             </ul>
           </div>
           
@@ -63,9 +63,8 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-bold mb-4 text-foreground">Training Programs</h3>
             <ul className="space-y-2">
               <li><Link to="/training/beginner" className="text-foreground/80 hover:text-foreground transition-colors">Beginner BJJ</Link></li>
+              <li><Link to="/training/intermediate" className="text-foreground/80 hover:text-foreground transition-colors">Intermediate BJJ</Link></li>
               <li><Link to="/training/advanced" className="text-foreground/80 hover:text-foreground transition-colors">Advanced Techniques</Link></li>
-              <li><Link to="/training/instructor" className="text-foreground/80 hover:text-foreground transition-colors">Instructor Program</Link></li>
-              <li><Link to="/training/retreat" className="text-foreground/80 hover:text-foreground transition-colors">Mountain Retreats</Link></li>
             </ul>
           </div>
           
