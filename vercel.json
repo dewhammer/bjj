@@ -9,7 +9,8 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "dist",
+        "zeroConfig": true
       }
     }
   ],
@@ -27,7 +28,26 @@
       "dest": "server/server.js"
     },
     {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|woff|woff2|ttf|eot))",
+      "src": "/manifest.json",
+      "headers": { "Content-Type": "application/manifest+json" },
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/assets/(.+)\\.js",
+      "headers": { "Content-Type": "application/javascript; charset=utf-8" },
+      "dest": "/assets/$1.js"
+    },
+    {
+      "src": "/assets/(.+)\\.css",
+      "headers": { "Content-Type": "text/css; charset=utf-8" },
+      "dest": "/assets/$1.css"
+    },
+    {
+      "src": "/assets/(.+)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json))",
       "dest": "/$1"
     },
     {

@@ -21,6 +21,9 @@
         background-color: #121212;
         color: #fff;
       }
+      #root {
+        min-height: 100vh;
+      }
       .fallback-content {
         display: none;
         padding: 2rem;
@@ -42,6 +45,27 @@
         white-space: pre-wrap;
         font-size: 0.875rem;
       }
+      /* Basic layout styles for static fallback page */
+      .static-content {
+        padding: 2rem;
+        max-width: 800px;
+        margin: 2rem auto;
+      }
+      .static-content h1 {
+        color: #0284c7;
+        margin-bottom: 1rem;
+      }
+      .static-content p {
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+      .card {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
     </style>
     <!-- Debug script to catch early errors -->
     <script>
@@ -60,24 +84,70 @@
             colno: event.colno,
             time: new Date().toISOString()
           });
+          
+          // Display error immediately
+          if (document.body) {
+            var errorDiv = document.createElement('div');
+            errorDiv.style.padding = '10px';
+            errorDiv.style.margin = '10px';
+            errorDiv.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
+            errorDiv.style.border = '1px solid red';
+            errorDiv.style.borderRadius = '4px';
+            errorDiv.style.color = 'white';
+            errorDiv.style.fontFamily = 'monospace';
+            errorDiv.textContent = 'Error: ' + event.message + ' (' + event.filename + ':' + event.lineno + ')';
+            document.body.appendChild(errorDiv);
+          }
         }
       });
 
-      // Show the fallback after 5 seconds if the app doesn't load
-      setTimeout(function() {
+      // Set up static content as a backup
+      document.addEventListener('DOMContentLoaded', function() {
+        // Insert static content that will be visible even if React fails to load
         var root = document.getElementById('root');
-        if (root && !root.hasChildNodes()) {
-          var fallback = document.getElementById('js-fallback');
-          if (fallback) {
-            fallback.style.display = 'block';
-            
-            var debugInfoEl = document.getElementById('debug-info');
-            if (debugInfoEl) {
-              debugInfoEl.textContent = JSON.stringify(window.debugInfo, null, 2);
+        if (root) {
+          // Create static content
+          var staticContent = document.createElement('div');
+          staticContent.className = 'static-content';
+          staticContent.innerHTML = `
+            <h1>Himalayan BJJ</h1>
+            <p>Achieve peak performance in Brazilian Jiu-Jitsu with our specialized mountain endurance training.</p>
+            <div class="card">
+              <h2>Our Programs</h2>
+              <p>We offer beginner, intermediate, and advanced programs designed to elevate your skills.</p>
+            </div>
+            <div class="card">
+              <h2>Contact Us</h2>
+              <p>Email: info@himalayanbjj.com</p>
+              <p>Phone: +91 1234567890</p>
+            </div>
+          `;
+          root.appendChild(staticContent);
+          
+          // Remove static content if React successfully renders
+          setTimeout(function() {
+            if (root.childNodes.length > 1) {
+              root.removeChild(staticContent);
+            }
+          }, 2000);
+        }
+        
+        // Show the fallback after 5 seconds if the app doesn't load correctly
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.childNodes.length <= 1) {
+            var fallback = document.getElementById('js-fallback');
+            if (fallback) {
+              fallback.style.display = 'block';
+              
+              var debugInfoEl = document.getElementById('debug-info');
+              if (debugInfoEl) {
+                debugInfoEl.textContent = JSON.stringify(window.debugInfo, null, 2);
+              }
             }
           }
-        }
-      }, 5000);
+        }, 5000);
+      });
     </script>
   </head>
   <body>
@@ -107,23 +177,23 @@
     </div>
     
     <script type="module" src="/src/main.tsx"></script>
-    <script type="module">
+    <script>
       // Service worker registration script
       // This will only run in production when built
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
+        window.addEventListener('load', function() {
           // Check if we're in production by looking for the sw.js file
           fetch('/sw.js', { method: 'HEAD' })
-            .then(response => {
+            .then(function(response) {
               if (response.ok) {
                 return navigator.serviceWorker.register('/sw.js');
               }
               throw new Error('Service worker not available in development');
             })
-            .then(registration => {
+            .then(function(registration) {
               console.log('Service Worker registered with scope:', registration.scope);
             })
-            .catch(error => {
+            .catch(function(error) {
               console.log('Service Worker registration skipped:', error);
             });
         });

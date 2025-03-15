@@ -9,9 +9,12 @@ export default defineConfig({
       overlay: false, // Disable the HMR error overlay
     },
   },
-  base: '/', // Use root-relative paths for all assets (changed from './')
+  base: '/', // Use root-relative paths for all assets
   build: {
     sourcemap: true, // Enable source maps for debugging
-    outDir: 'dist'
-  }
+    outDir: 'dist',
+    assetsInlineLimit: 0, // Don't inline any assets as base64
+  },
+  // Configure MIME types for assets
+  assetsInclude: ['**/*.json'],
 }); 
