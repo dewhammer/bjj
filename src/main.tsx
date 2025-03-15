@@ -1,3 +1,9 @@
+// Basic polyfill detection
+if (!window.Promise || !window.fetch || !Object.assign || !window.Map) {
+  console.warn('Browser missing required features. Redirecting to fallback page...');
+  window.location.href = '/fallback.html';
+}
+
 // Plain JS at the top to catch errors before React loads
 (() => {
   try {
@@ -12,18 +18,25 @@
         if (event.error && (
           event.error.toString().includes('MIME type') || 
           event.error.toString().includes('module') ||
-          event.error.toString().includes('undefined')
+          event.error.toString().includes('undefined') ||
+          // Add common mobile errors
+          event.error.toString().includes('null is not an object') ||
+          event.error.toString().includes('Cannot read property') ||
+          event.error.toString().includes('is not a function')
         )) {
           console.log('Fatal error detected, redirecting to fallback page');
-          window.location.href = '/fallback';
+          window.location.href = '/fallback.html';
         }
       } catch (e) {
         console.error('Error in error handler:', e);
+        // Last resort
+        window.location.href = '/fallback.html';
       }
     });
     
   } catch (e) {
     console.error('Error in initialization script:', e);
+    window.location.href = '/fallback.html';
   }
 })();
 
@@ -35,6 +48,7 @@ import App from './App.tsx'
 // Console logging for debugging
 console.log('Starting application...');
 console.log('User agent:', navigator.userAgent);
+console.log('Screen dimensions:', window.innerWidth, 'x', window.innerHeight, 'pixel ratio:', window.devicePixelRatio);
 
 // Log initialization for debugging
 console.log('Application initializing...');
@@ -77,7 +91,7 @@ window.addEventListener('error', (event) => {
           Refresh Page
         </button>
         <button style="padding: 10px 20px; background-color: #4b5563; color: white; border: none; border-radius: 4px; cursor: pointer;" 
-                onclick="window.location.href='/fallback'">
+                onclick="window.location.href='/fallback.html'">
           Go to Fallback Page
         </button>
       </div>
@@ -85,14 +99,39 @@ window.addEventListener('error', (event) => {
   `;
 });
 
+// Mobile device specific handling
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+  console.log('Mobile device detected, applying mobile optimizations');
+  
+  // Add mobile-specific error handler
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    // Only redirect on severe errors
+    if (event.reason && (
+      event.reason.toString().includes('Cannot read') ||
+      event.reason.toString().includes('null is not an object') ||
+      event.reason.toString().includes('undefined is not an object')
+    )) {
+      console.error('Critical error in promise, redirecting to fallback');
+      window.location.href = '/fallback.html';
+    }
+  });
+}
+
 // Get the root element and render the app
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  createRoot(rootElement).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
+  try {
+    createRoot(rootElement).render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+  } catch (e) {
+    console.error('Error rendering React app:', e);
+    window.location.href = '/fallback.html';
+  }
 } else {
   console.error('Root element not found');
+  window.location.href = '/fallback.html';
 }

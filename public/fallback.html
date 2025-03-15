@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Himalayan BJJ - Static Fallback</title>
   <style>
     body {
@@ -18,8 +18,9 @@
     }
     .container {
       max-width: 800px;
-      margin: 40px auto;
-      padding: 30px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 20px;
       background-color: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -27,12 +28,13 @@
     h1 {
       color: #0284c7;
       margin-bottom: 20px;
+      font-size: 24px;
     }
     .card {
       background-color: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
-      padding: 20px;
-      margin: 20px 0;
+      padding: 15px;
+      margin: 15px 0;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .btn {
@@ -45,13 +47,32 @@
       margin-top: 20px;
       text-decoration: none;
       display: inline-block;
+      text-align: center;
+    }
+    /* Mobile optimizations */
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+        margin: 10px auto;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .card {
+        padding: 12px;
+        margin: 12px 0;
+      }
+      .btn {
+        width: 100%;
+        padding: 12px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Himalayan BJJ</h1>
-    <p>This is a static fallback page that appears when the main application cannot load properly.</p>
+    <p>This is a simplified version of our website optimized for all devices.</p>
     
     <div class="card">
       <h2>About Us</h2>
@@ -61,6 +82,11 @@
     <div class="card">
       <h2>Our Programs</h2>
       <p>We offer beginner, intermediate, and advanced programs designed to elevate your skills and endurance.</p>
+      <ul>
+        <li>Beginner to Blue Belt Journey</li>
+        <li>Intermediate Competition Ready</li>
+        <li>Advanced Black Belt Path</li>
+      </ul>
     </div>
     
     <div class="card">
@@ -73,7 +99,7 @@
   </div>
 
   <script>
-    // Log diagnostic information
+    // Basic diagnostics
     console.log('Static fallback page loaded at: ' + new Date().toString());
     console.log('User agent: ' + navigator.userAgent);
     
@@ -88,6 +114,19 @@
       .catch(error => {
         console.error('Error checking main site:', error);
       });
+      
+    // Add a reload button that clears cache
+    document.querySelector('.btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      // Try to clear cache
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (let name of names) caches.delete(name);
+        });
+      }
+      // Reload with cache bypass
+      window.location.href = '/?nocache=' + Date.now();
+    });
   </script>
 </body>
 </html> 

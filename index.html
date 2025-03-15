@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="theme-color" content="#0284c7" />
     <meta name="description" content="Achieve peak performance in Brazilian Jiu-Jitsu and mountain endurance with HimalayanBJJ" />
     <link rel="manifest" href="/manifest.json" />
@@ -33,7 +33,36 @@
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 0.5rem;
       }
+      #browser-warning {
+        display: none;
+        padding: 1rem;
+        background-color: rgba(255, 99, 71, 0.2);
+        border: 1px solid rgba(255, 99, 71, 0.5);
+        border-radius: 0.5rem;
+        margin: 1rem;
+        color: white;
+      }
     </style>
+    <!-- Browser compatibility check -->
+    <script>
+      try {
+        // Simple feature detection for modern browsers
+        if (!window.Promise || !window.fetch || !Object.assign || !window.Map) {
+          document.addEventListener('DOMContentLoaded', function() {
+            var warningEl = document.createElement('div');
+            warningEl.id = 'browser-warning';
+            warningEl.innerHTML = '<h3>Browser Compatibility Notice</h3>' +
+              '<p>Your browser may not fully support all features of this application. ' +
+              'For the best experience, please use a modern browser like Chrome, Firefox, Safari, or Edge.</p>' +
+              '<p><a href="/fallback.html" style="color: white; text-decoration: underline;">Visit our simplified version</a></p>';
+            document.body.insertBefore(warningEl, document.body.firstChild);
+            warningEl.style.display = 'block';
+          });
+        }
+      } catch(e) {
+        console.error('Browser compatibility check failed:', e);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
