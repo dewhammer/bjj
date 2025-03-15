@@ -18,53 +18,19 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({
   variant = 'secondary' 
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleCheckout = async () => {
     setIsLoading(true);
-    setError(null);
     
     try {
-      // In a real app, this would call a real API endpoint
-      // For this demo, we'll simulate a successful checkout
+      // Simulate a brief loading state for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulate successful checkout
-      // In a real app, this would redirect to Stripe
-      navigate('/payment-success?session_id=demo_' + Date.now());
-      
-      /* 
-      // This is the real implementation that would be used with a Stripe backend
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          programId,
-          amount,
-          name,
-          description
-        }),
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        // Redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else {
-        setError(data.error?.message || 'Something went wrong');
-        console.error('Checkout error:', data.error);
-      }
-      */
-      
+      // Navigate to the custom checkout page with program details
+      navigate(`/checkout?program=${programId}&price=${amount / 100}&name=${encodeURIComponent(name)}`);
     } catch (err) {
-      setError('Failed to process checkout. Please try again later or contact support.');
-      console.error('Checkout error:', err);
+      console.error('Navigation error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -89,12 +55,6 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({
       >
         {isLoading ? 'Processing...' : 'Checkout'}
       </GlassmorphicButton>
-      
-      {error && (
-        <div className="mt-2 text-red-500 text-sm">
-          {error}
-        </div>
-      )}
     </div>
   );
 };

@@ -10,12 +10,9 @@ const IntermediateProgram: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  const handleBuyNow = async () => {
-    // Simulate loading
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Navigate to checkout page
-    navigate('/checkout?program=intermediate&price=20000');
+  const handleBuyNow = () => {
+    // Navigate directly to checkout page
+    navigate('/checkout?program=intermediate&price=20000&name=Blue%20Belt%20to%20Purple%20Belt%20Journey');
   };
   
   return (

@@ -112,7 +112,7 @@ const Instructor: React.FC<InstructorProps> = ({ name, role, bio, imageSrc, soci
           <GlassmorphicButton
             variant="secondary"
             fullWidth
-            href="#contact"
+            href="/programs"
           >
             Train with {name.split(' ')[0]}
           </GlassmorphicButton>

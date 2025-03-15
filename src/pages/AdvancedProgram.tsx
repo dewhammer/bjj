@@ -10,12 +10,9 @@ const AdvancedProgram: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  const handleBuyNow = async () => {
-    // Simulate loading
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Navigate to checkout page
-    navigate('/checkout?program=advanced&price=30000');
+  const handleBuyNow = () => {
+    // Navigate directly to checkout page
+    navigate('/checkout?program=advanced&price=30000&name=Jiu%20Jitsu%20Instructor%20Program');
   };
   
   return (

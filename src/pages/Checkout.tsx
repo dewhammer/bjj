@@ -7,7 +7,9 @@ const Checkout: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   
-  const programName = getProgramName(queryParams.get('program') || '');
+  // Get program info from URL parameters
+  const programId = queryParams.get('program') || '';
+  const programName = queryParams.get('name') || getProgramName(programId);
   const price = parseInt(queryParams.get('price') || '0', 10);
   
   const [isProcessing, setIsProcessing] = useState(false);
@@ -23,11 +25,15 @@ const Checkout: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Fallback function if name is not provided in URL
   function getProgramName(programId: string): string {
     switch(programId) {
-      case 'beginner': return 'Beginner BJJ Program';
+      case 'beginner': 
+      case 'beginners-course': return 'Beginner BJJ Program';
       case 'intermediate': return 'Intermediate BJJ Program';
-      case 'advanced': return 'Advanced Instructor Program';
+      case 'advanced': 
+      case 'advanced-course': return 'Advanced Instructor Program';
+      case 'private-lessons': return 'Private BJJ Lessons';
       default: return 'BJJ Program';
     }
   }
@@ -78,7 +84,7 @@ const Checkout: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 2500));
       
       // Navigate to success page
-      navigate(`/payment-success?session_id=${queryParams.get('program')}_${Date.now()}`);
+      navigate(`/payment-success?session_id=${programId}_${Date.now()}`);
     } catch (error) {
       console.error('Payment error:', error);
       setIsProcessing(false);

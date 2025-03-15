@@ -15,7 +15,6 @@ const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
 const PaymentCancelled = lazy(() => import('./pages/PaymentCancelled'));
-const CheckoutDemo = lazy(() => import('./pages/CheckoutDemo'));
 const Signup = lazy(() => import('./pages/Signup'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 
@@ -33,7 +32,6 @@ function App() {
             <Route path="training/advanced" element={<AdvancedProgram />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
-            <Route path="checkout-demo" element={<CheckoutDemo />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="payment-success" element={<PaymentSuccess />} />
             <Route path="payment-cancelled" element={<PaymentCancelled />} />
