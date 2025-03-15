@@ -6,6 +6,15 @@ import EbookPopup from '../ui/EbookPopup';
 const GlassmorphicHero: React.FC = () => {
   const [showEbookPopup, setShowEbookPopup] = useState(false);
 
+  // Function to handle smooth scrolling to sections
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, sectionId: string) => {
+    e.preventDefault();
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <>
       <section className="relative min-h-[90vh] flex items-center overflow-hidden py-16">
@@ -38,7 +47,8 @@ const GlassmorphicHero: React.FC = () => {
                 <GlassmorphicButton 
                   variant="secondary" 
                   size="lg"
-                  to="#training"
+                  href="#training"
+                  onClick={(e) => e && handleScrollToSection(e, 'training')}
                   icon={
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />

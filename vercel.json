@@ -25,7 +25,8 @@
     },
     {
       "src": "/create-payment-intent",
-      "dest": "server/server.js"
+      "dest": "server/server.js",
+      "methods": ["POST", "OPTIONS"]
     },
     {
       "src": "/fallback",

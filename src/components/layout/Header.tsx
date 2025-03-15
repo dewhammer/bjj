@@ -14,6 +14,7 @@ const navItems = [
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>('');
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   
@@ -26,7 +27,50 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Track active section based on scroll position
+  useEffect(() => {
+    if (!isHomePage) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.2,
+    };
+
+    const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          setActiveSection(sectionId ? `#${sectionId}` : '');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+    
+    // Observe all sections that correspond to nav items
+    const sections = navItems
+      .map(item => item.path.startsWith('#') ? document.getElementById(item.path.substring(1)) : null)
+      .filter(Boolean);
+    
+    sections.forEach(section => {
+      if (section) observer.observe(section);
+    });
+
+    // Also observe the top section
+    const topSection = document.getElementById('top');
+    if (topSection) observer.observe(topSection);
+
+    return () => {
+      sections.forEach(section => {
+        if (section) observer.unobserve(section);
+      });
+      if (topSection) observer.unobserve(topSection);
+    };
+  }, [isHomePage]);
   
+  // Handle smooth scrolling to sections
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     // If it's a hash link and we're on homepage, do smooth scroll
     if (path.startsWith('#') && isHomePage) {
@@ -34,6 +78,8 @@ const Header: React.FC = () => {
       const targetElement = document.querySelector(path);
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Update the active section
+        setActiveSection(path);
       }
     } else if (path === '/' && !isHomePage) {
       // If it's the home link and we're not on homepage, navigate to homepage
@@ -48,6 +94,19 @@ const Header: React.FC = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Determine if a nav item is active
+  const isNavItemActive = (path: string) => {
+    if (path === '/') {
+      return (isHomePage && activeSection === '') || (!isHomePage && location.pathname === '/');
+    }
+    
+    if (path.startsWith('#')) {
+      return isHomePage && (activeSection === path || (activeSection === '' && path === '#top'));
+    }
+    
+    return location.pathname === path;
   };
   
   return (
@@ -77,10 +136,7 @@ const Header: React.FC = () => {
           {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item, index) => {
-              const isActive = 
-                (isHomePage && item.path.startsWith('#') && location.hash === item.path) ||
-                (!isHomePage && item.path === location.pathname) ||
-                (item.path === '/' && location.pathname === '/');
+              const isActive = isNavItemActive(item.path);
               
               return (
                 <a
@@ -106,13 +162,14 @@ const Header: React.FC = () => {
             <GlassmorphicButton
               variant="secondary"
               size="sm"
-              to={isHomePage ? "#training" : "/#training"}
+              href={isHomePage ? "#training" : "/#training"}
               onClick={(e) => {
                 if (isHomePage && e) {
                   e.preventDefault();
                   const targetElement = document.querySelector('#training');
                   if (targetElement) {
                     targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setActiveSection('#training');
                   }
                 }
               }}
@@ -123,22 +180,42 @@ const Header: React.FC = () => {
           
           {/* Mobile Menu Button - Only visible on mobile */}
           <button 
-            className="md:hidden text-white focus:outline-none"
+            className="md:hidden text-white focus:outline-none bg-gray-800/80 p-1.5 rounded-lg"
             onClick={toggleMobileMenu}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
+            {mobileMenuOpen ? (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            ) : (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            )}
           </button>
         </div>
         
@@ -146,23 +223,31 @@ const Header: React.FC = () => {
         {mobileMenuOpen && (
           <div className="md:hidden mt-2 p-4 rounded-xl bg-background/95 backdrop-blur-md border border-primary/20 shadow-glass-lg">
             <nav className="flex flex-col space-y-2">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  onClick={(e) => {
-                    handleSmoothScroll(e, item.path);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-4 py-2 rounded-lg text-foreground hover:bg-white/10"
-                >
-                  {item.name}
-                </a>
-              ))}
+              {navItems.map((item) => {
+                const isActive = isNavItemActive(item.path);
+                return (
+                  <a
+                    key={item.name}
+                    href={item.path}
+                    onClick={(e) => {
+                      handleSmoothScroll(e, item.path);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={cn(
+                      "px-4 py-2 rounded-lg transition-colors duration-200",
+                      isActive 
+                        ? "text-accent font-medium bg-white/15 border border-accent/20" 
+                        : "text-foreground hover:bg-white/10"
+                    )}
+                  >
+                    {item.name}
+                  </a>
+                );
+              })}
               <GlassmorphicButton
                 variant="secondary"
                 size="sm"
-                to={isHomePage ? "#training" : "/#training"}
+                href={isHomePage ? "#training" : "/#training"}
                 className="mt-2"
                 onClick={(e) => {
                   if (isHomePage && e) {
@@ -170,6 +255,7 @@ const Header: React.FC = () => {
                     const targetElement = document.querySelector('#training');
                     if (targetElement) {
                       targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      setActiveSection('#training');
                       setMobileMenuOpen(false);
                     }
                   }
