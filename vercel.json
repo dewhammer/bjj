@@ -28,22 +28,31 @@
       "dest": "server/server.js"
     },
     {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/index.html",
+      "headers": { "Cache-Control": "public, max-age=0, must-revalidate" },
+      "dest": "/index.html"
+    },
+    {
       "src": "/manifest.json",
       "headers": { "Content-Type": "application/manifest+json" },
       "dest": "/manifest.json"
     },
     {
-      "src": "/assets/(.+)\\.js",
+      "src": "/(.*)\\.js$",
       "headers": { "Content-Type": "application/javascript; charset=utf-8" },
-      "dest": "/assets/$1.js"
+      "continue": true
     },
     {
-      "src": "/assets/(.+)\\.css",
+      "src": "/(.*)\\.css$",
       "headers": { "Content-Type": "text/css; charset=utf-8" },
-      "dest": "/assets/$1.css"
+      "continue": true
     },
     {
-      "src": "/assets/(.+)",
+      "src": "/assets/(.*)",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
       "dest": "/assets/$1"
     },
     {

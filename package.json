@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start:all": "concurrently \"npm run dev\" \"cd server && node server.js\"",
-    "vercel-build": "vite build",
+    "vercel-build": "vite build --mode production",
     "postinstall": "cd server && npm install"
   },
   "dependencies": {
