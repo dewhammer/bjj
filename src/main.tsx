@@ -1,3 +1,32 @@
+// Plain JS at the top to catch errors before React loads
+(() => {
+  try {
+    console.log("Script execution started");
+    
+    // Check if we can redirect on error
+    window.addEventListener('error', (event) => {
+      console.error('Global error caught:', event.error);
+      
+      // Try to redirect to the fallback page if we have a fatal error
+      try {
+        if (event.error && (
+          event.error.toString().includes('MIME type') || 
+          event.error.toString().includes('module') ||
+          event.error.toString().includes('undefined')
+        )) {
+          console.log('Fatal error detected, redirecting to fallback page');
+          window.location.href = '/fallback';
+        }
+      } catch (e) {
+        console.error('Error in error handler:', e);
+      }
+    });
+    
+  } catch (e) {
+    console.error('Error in initialization script:', e);
+  }
+})();
+
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -15,7 +44,7 @@ const SimpleApp = () => {
     // Clean up static content if it exists
     const rootElement = document.getElementById('root');
     const staticContent = rootElement?.querySelector('.static-content');
-    if (staticContent) {
+    if (staticContent && rootElement) {
       console.log('Removing static content placeholder');
       rootElement.removeChild(staticContent);
     }
@@ -96,10 +125,16 @@ window.addEventListener('error', (event) => {
           <li>User Agent: ${navigator.userAgent}</li>
         </ul>
       </div>
-      <button style="margin-top: 20px; padding: 10px 20px; background-color: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer;" 
-              onclick="window.location.reload()">
-        Refresh Page
-      </button>
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button style="padding: 10px 20px; background-color: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                onclick="window.location.reload()">
+          Refresh Page
+        </button>
+        <button style="padding: 10px 20px; background-color: #4b5563; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                onclick="window.location.href='/fallback'">
+          Go to Fallback Page
+        </button>
+      </div>
     </div>
   `;
 });
@@ -113,6 +148,10 @@ if (!rootElement) {
       <h1 style="color: #b91c1c; margin-bottom: 10px;">Root Element Missing</h1>
       <p>The application could not find the "root" element to render into.</p>
       <p>This is usually caused by an HTML structure issue.</p>
+      <button style="margin-top: 20px; padding: 10px 20px; background-color: #4b5563; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+              onclick="window.location.href='/fallback'">
+        Go to Fallback Page
+      </button>
     </div>
   `;
 } else {
@@ -136,10 +175,16 @@ if (!rootElement) {
         <pre style="background-color: #fff; padding: 10px; border-radius: 4px; overflow: auto; margin-top: 10px;">
           ${error instanceof Error ? error.stack || error.message : String(error)}
         </pre>
-        <button style="margin-top: 20px; padding: 10px 20px; background-color: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer;" 
-                onclick="window.location.reload()">
-          Refresh Page
-        </button>
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button style="padding: 10px 20px; background-color: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                  onclick="window.location.reload()">
+            Refresh Page
+          </button>
+          <button style="padding: 10px 20px; background-color: #4b5563; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                  onclick="window.location.href='/fallback'">
+            Go to Fallback Page
+          </button>
+        </div>
       </div>
     `;
   }
