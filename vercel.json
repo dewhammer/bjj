@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "framework": null,
   "builds": [
     {
       "src": "server/server.js",
@@ -9,8 +10,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
-        "zeroConfig": true
+        "distDir": "dist"
       }
     }
   ],
@@ -32,73 +32,11 @@
       "dest": "/fallback.html"
     },
     {
-      "src": "/assets/(.*)\\.js$",
-      "headers": { 
-        "content-type": "application/javascript; charset=utf-8",
-        "cache-control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
-    },
-    {
-      "src": "/(.*)\\.js$",
-      "headers": { 
-        "content-type": "application/javascript; charset=utf-8"
-      },
-      "continue": true
-    },
-    {
-      "src": "/(.*)\\.css$",
-      "headers": { 
-        "content-type": "text/css; charset=utf-8"
-      },
-      "continue": true
-    },
-    {
       "handle": "filesystem"
     },
     {
-      "src": "/index.html",
-      "headers": { "Cache-Control": "public, max-age=0, must-revalidate" },
+      "src": "/(.*)",
       "dest": "/index.html"
-    },
-    {
-      "src": "/manifest.json",
-      "headers": { "Content-Type": "application/manifest+json" },
-      "dest": "/manifest.json"
-    },
-    {
-      "src": "/assets/(.*)",
-      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "check": true
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/fallback.html",
-      "status": 200
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
     }
   ]
 } 

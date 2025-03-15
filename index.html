@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Himalayan BJJ - Brazilian Jiu-Jitsu & Mountain Endurance</title>
     <style>
-      /* Fallback styles in case CSS doesn't load */
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         margin: 0;
@@ -21,290 +20,31 @@
         background-color: #121212;
         color: #fff;
       }
-      #root {
-        min-height: 100vh;
-      }
-      .fallback-content {
+      .fallback {
         display: none;
         padding: 2rem;
         max-width: 800px;
         margin: 2rem auto;
-        background-color: #1e293b;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
-      noscript .fallback-content {
-        display: block;
-      }
-      .debug-info {
-        background-color: #0f172a;
-        padding: 1rem;
-        border-radius: 0.25rem;
-        margin-top: 1rem;
-        font-family: monospace;
-        white-space: pre-wrap;
-        font-size: 0.875rem;
-      }
-      /* Basic layout styles for static fallback page */
-      .static-content {
+      .noscript {
         padding: 2rem;
         max-width: 800px;
         margin: 2rem auto;
-      }
-      .static-content h1 {
-        color: #0284c7;
-        margin-bottom: 1rem;
-      }
-      .static-content p {
-        margin-bottom: 1rem;
-        line-height: 1.5;
-      }
-      .card {
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 0.5rem;
-        padding: 1.5rem;
-        margin: 1.5rem 0;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      /* Error message styling */
-      .error-box {
-        background-color: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.5);
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 0.5rem;
-      }
-      .btn {
-        background-color: #0284c7;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 1rem;
       }
     </style>
-    <!-- Module loading error detection -->
-    <script>
-      // This script runs before any modules are loaded
-      window.moduleLoadingErrors = [];
-      window.scriptError = false;
-      
-      // Function to record errors
-      function recordError(error) {
-        try {
-          console.error('Error detected:', error);
-          if (window.moduleLoadingErrors) {
-            window.moduleLoadingErrors.push({
-              message: error.message || String(error),
-              time: new Date().toISOString()
-            });
-          }
-        } catch (e) {
-          console.error('Error in error handler:', e);
-        }
-      }
-      
-      // Global error handler
-      window.addEventListener('error', function(event) {
-        recordError(event.error || event);
-        
-        // If it's a MIME type error, mark script loading as failed
-        if (event.message && event.message.includes('MIME type')) {
-          window.scriptError = true;
-          showFallbackContent();
-        }
-      });
-      
-      // Function to show fallback content
-      function showFallbackContent() {
-        try {
-          var root = document.getElementById('root');
-          if (root) {
-            root.innerHTML = `
-              <div class="static-content">
-                <div class="error-box">
-                  <h2>Script Loading Error</h2>
-                  <p>We're having trouble loading the application scripts.</p>
-                  <p>This might be due to a network issue or server configuration.</p>
-                </div>
-                
-                <h1>Himalayan BJJ</h1>
-                <p>Achieve peak performance with our Brazilian Jiu-Jitsu and Himalayan endurance training programs.</p>
-                
-                <div class="card">
-                  <h2>Our Programs</h2>
-                  <p>We offer specialized training programs for all skill levels from beginner to advanced.</p>
-                </div>
-                
-                <div class="card">
-                  <h2>Contact Us</h2>
-                  <p>Email: info@himalayanbjj.com</p>
-                </div>
-                
-                <a href="/fallback" class="btn">Go to Fallback Page</a>
-                <button onclick="window.location.reload()" class="btn">Try Again</button>
-              </div>
-            `;
-          }
-        } catch (e) {
-          console.error('Error showing fallback content:', e);
-        }
-      }
-      
-      // Check for module script loading after a delay
-      setTimeout(function() {
-        if (window.scriptError) {
-          console.log('Script error detected, fallback content should be shown');
-        } else {
-          console.log('No immediate script errors detected');
-        }
-      }, 2000);
-    </script>
-    <!-- Debug script to catch early errors -->
-    <script>
-      window.debugInfo = {
-        startTime: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        errors: []
-      };
-      
-      window.addEventListener('error', function(event) {
-        if (window.debugInfo) {
-          window.debugInfo.errors.push({
-            message: event.message,
-            source: event.filename,
-            lineno: event.lineno,
-            colno: event.colno,
-            time: new Date().toISOString()
-          });
-          
-          // Display error immediately
-          if (document.body) {
-            var errorDiv = document.createElement('div');
-            errorDiv.style.padding = '10px';
-            errorDiv.style.margin = '10px';
-            errorDiv.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
-            errorDiv.style.border = '1px solid red';
-            errorDiv.style.borderRadius = '4px';
-            errorDiv.style.color = 'white';
-            errorDiv.style.fontFamily = 'monospace';
-            errorDiv.textContent = 'Error: ' + event.message + ' (' + event.filename + ':' + event.lineno + ')';
-            document.body.appendChild(errorDiv);
-          }
-        }
-      });
-
-      // Set up static content as a backup
-      document.addEventListener('DOMContentLoaded', function() {
-        // Insert static content that will be visible even if React fails to load
-        var root = document.getElementById('root');
-        if (root) {
-          // Create static content
-          var staticContent = document.createElement('div');
-          staticContent.className = 'static-content';
-          staticContent.innerHTML = `
-            <h1>Himalayan BJJ</h1>
-            <p>Achieve peak performance in Brazilian Jiu-Jitsu with our specialized mountain endurance training.</p>
-            <div class="card">
-              <h2>Our Programs</h2>
-              <p>We offer beginner, intermediate, and advanced programs designed to elevate your skills.</p>
-            </div>
-            <div class="card">
-              <h2>Contact Us</h2>
-              <p>Email: info@himalayanbjj.com</p>
-              <p>Phone: +91 1234567890</p>
-            </div>
-          `;
-          root.appendChild(staticContent);
-          
-          // Remove static content if React successfully renders
-          setTimeout(function() {
-            if (root.childNodes.length > 1) {
-              root.removeChild(staticContent);
-            }
-          }, 2000);
-        }
-        
-        // Show the fallback after 5 seconds if the app doesn't load correctly
-        setTimeout(function() {
-          var root = document.getElementById('root');
-          if (root && root.childNodes.length <= 1) {
-            var fallback = document.getElementById('js-fallback');
-            if (fallback) {
-              fallback.style.display = 'block';
-              
-              var debugInfoEl = document.getElementById('debug-info');
-              if (debugInfoEl) {
-                debugInfoEl.textContent = JSON.stringify(window.debugInfo, null, 2);
-              }
-            }
-          }
-        }, 5000);
-      });
-    </script>
   </head>
   <body>
     <div id="root"></div>
     
-    <!-- Fallback content if JavaScript is disabled -->
     <noscript>
-      <div class="fallback-content">
+      <div class="noscript">
         <h1>JavaScript Required</h1>
         <p>This website requires JavaScript to function properly. Please enable JavaScript in your browser settings and reload the page.</p>
       </div>
     </noscript>
     
-    <!-- Fallback content if the app doesn't load within 5 seconds -->
-    <div id="js-fallback" class="fallback-content">
-      <h1>Application Loading Issue</h1>
-      <p>We're having trouble loading the application. This could be due to:</p>
-      <ul>
-        <li>Slow internet connection</li>
-        <li>JavaScript errors</li>
-        <li>Browser compatibility issues</li>
-      </ul>
-      <p>Please try refreshing the page or using a different browser.</p>
-      
-      <h2>Debug Information</h2>
-      <div id="debug-info" class="debug-info">Loading debug information...</div>
-      
-      <a href="/fallback" class="btn">View Fallback Page</a>
-    </div>
-    
-    <!-- Main application script (with error-catching wrapper) -->
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Fallback script for browsers with module issues -->
-    <script nomodule>
-      console.log('nomodule script running - this means ES modules are not supported');
-      window.location.href = '/fallback';
-    </script>
-    
-    <!-- Traditional script for service worker -->
-    <script>
-      // Service worker registration script
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          // Check if we're in production by looking for the sw.js file
-          fetch('/sw.js', { method: 'HEAD' })
-            .then(function(response) {
-              if (response.ok) {
-                return navigator.serviceWorker.register('/sw.js');
-              }
-              throw new Error('Service worker not available in development');
-            })
-            .then(function(registration) {
-              console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch(function(error) {
-              console.log('Service Worker registration skipped:', error);
-            });
-        });
-      }
-    </script>
   </body>
 </html>

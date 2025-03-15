@@ -6,13 +6,11 @@
   "homepage": "/",
   "scripts": {
     "dev": "vite",
-    "prebuild": "echo 'Running prebuild checks...'",
     "build": "vite build",
-    "build:pwa": "vite build && workbox generateSW workbox-config.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "start:all": "concurrently \"npm run dev\" \"cd server && node server.js\"",
-    "vercel-build": "vite build --mode production",
+    "vercel-build": "npm run build",
     "postinstall": "cd server && npm install"
   },
   "dependencies": {
